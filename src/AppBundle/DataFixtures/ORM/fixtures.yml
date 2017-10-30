@@ -1,0 +1,57 @@
+AppBundle\Entity\Category:
+    category_1:
+        description: Doces
+    category_2:
+        description: Especial
+    category_3:
+        description: Tradicional
+
+AppBundle\Entity\Pizza:
+    pizza_1:
+        description: Calabresa - Pizza Tradicional
+        subtitle: Pizza de Calabresa - Tradicional
+        price: 20
+        image: http://www.donapizzadf.com.br/images/stories/virtuemart/product/pizza.jpg
+        code: 01
+        url_detail: http://www.donapizzadf.com.br/index.php/cardapio/tradicional/calabresa
+        category: '@category_3'
+    pizza_2:
+        description: Romeu e Julieta - Pizza Tradicional
+        subtitle: Romeu e Julieta - Tradicional
+        price: 25
+        image: http://www.donapizzadf.com.br/images/stories/virtuemart/product/pizza_doce.jpg
+        code: 05
+        url_detail: http://www.donapizzadf.com.br/index.php/cardapio/tradicional/romeu-e-julieta
+        category: '@category_3'
+    pizza_3:
+        description: Queijo Coalho com Rapadura - Pizza Doce
+        subtitle: Queijo Coalho com Rapadura - Pizza Doce
+        price: 42
+        image: http://www.donapizzadf.com.br/images/stories/virtuemart/product/pizza_queijo_coalho.jpg
+        code: 50
+        url_detail: http://www.donapizzadf.com.br/index.php/cardapio/tradicional/romeu-e-julieta
+        category: '@category_1'
+    pizza_4:
+        description: Morango com Nutella
+        subtitle: Pizza Morango com Nutella
+        price: 35
+        image: http://www.donapizzadf.com.br/images/stories/virtuemart/product/pizza_morango_nutella.jpg
+        code: 52
+        url_detail: http://www.donapizzadf.com.br/index.php/melhores/morando-com-nutella
+        category: '@category_1'
+    pizza_5:
+        description: Califórnia
+        subtitle: Pizza Califórnia
+        price: 37
+        image: http://www.donapizzadf.com.br/images/stories/virtuemart/product/pizza_california.jpg
+        code: 51
+        url_detail: http://www.donapizzadf.com.br/index.php/cardapio/especial/51/pizza-california-detail
+        category: '@category_2'
+    pizza_6:
+        description: Paulista - Pizza Especial
+        subtitle: Paulista - Pizza Especial
+        price: 32
+        image: http://www.donapizzadf.com.br/images/stories/virtuemart/product/pizza.jpg
+        code: 14
+        url_detail: http://www.donapizzadf.com.br/index.php/cardapio/tradicional/2013-11-29-13-08-50/quatro-estacoes
+        category: '@category_2'

@@ -24,6 +24,11 @@ class OrderPizzaConversation extends Conversation
     const ORDER_SELECT_PIZZA_FINISHED = 'order_select_pizza_finished';
 
     /**
+     * @var bool
+     */
+    protected $stopsConversation = false;
+
+    /**
      * @var int
      */
     protected $categoryId;
@@ -67,11 +72,7 @@ class OrderPizzaConversation extends Conversation
 
     public function stopsConversation(IncomingMessage $message)
     {
-        if ($message->getText() == 'stop') {
-            return true;
-        }
-
-        return false;
+        return $this->stopsConversation;
     }
 
     private function setUserInformation()
@@ -210,22 +211,32 @@ class OrderPizzaConversation extends Conversation
 
                     global $kernel;
 
-                    $payload = $this->bot->getMessage()->getPayload()['postback']['payload'];
+                    if(!empty($this->bot->getMessage()->getPayload()['postback'])){
 
-                    //ORDER_PIZZA_ADD_ITEM_{id}
-                    $exp = explode('_', $payload);
+                        $payload = $this->bot->getMessage()->getPayload()['postback']['payload'];
 
-                    $pizzaSelected = $kernel->getContainer()->get('doctrine')->getRepository(Pizza::class)
-                        ->findOneBy(['id' => $exp[4]]);
+                        if (substr($payload, 0, 21) == 'ORDER_PIZZA_ADD_ITEM_') {
+                            //ORDER_PIZZA_ADD_ITEM_{id}
+                            $exp = explode('_', $payload);
 
-                    $this->currentOrdemItem = new OrderItems();
-                    $this->currentOrdemItem
-                        ->setPizza($pizzaSelected)
-                        ->setUnitPrice($pizzaSelected->getPrice());
+                            $pizzaSelected = $kernel->getContainer()->get('doctrine')->getRepository(Pizza::class)
+                                ->findOneBy(['id' => $exp[4]]);
 
-                    $this->order->addOrderItem($this->currentOrdemItem);
+                            $this->currentOrdemItem = new OrderItems();
+                            $this->currentOrdemItem
+                                ->setPizza($pizzaSelected)
+                                ->setUnitPrice($pizzaSelected->getPrice());
 
-                    $this->askQuantity($pizzaSelected);
+                            $this->order->addOrderItem($this->currentOrdemItem);
+
+                            $this->askQuantity($pizzaSelected);
+                        } else {
+                            $this->stopsConversation = true;
+                        }
+                    }
+                    else {
+                        $this->stopsConversation = true;
+                    }
                 }
             );
 

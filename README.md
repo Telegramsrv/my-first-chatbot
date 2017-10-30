@@ -1,4 +1,4 @@
-my-first-chatbot
+My First Chatbot
 ================
 
-A Symfony project created on October 7, 2017, 2:05 pm.
+A PHP Symfony project with botman.io lib to test Facebook Messenger ChatBot

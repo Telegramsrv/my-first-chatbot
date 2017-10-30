@@ -1,6 +1,11 @@
 imports:
     - { resource: config.yml }
 
+parameters:
+    fb_token: "%env(FB_TOKEN)%"
+    fb_secret: "%env(FB_SECRET)%"
+    fb_verification:  "%env(FB_VERIFICATION)%"
+
 doctrine:
     dbal:
         url: "%env(CLEARDB_DATABASE_URL)%"

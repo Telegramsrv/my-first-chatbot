@@ -57,7 +57,6 @@ class AddressHelper
 
         if (count($validate) > 0) {
             $errors = $validate->getIterator()->getArrayCopy();
-            dump($errors);
             $translator = $this->translator;
 
             /** @var ConstraintViolation $error */

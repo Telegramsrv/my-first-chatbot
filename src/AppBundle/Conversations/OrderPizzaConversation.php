@@ -358,8 +358,8 @@ class OrderPizzaConversation extends Conversation
 
                     if (!$errors) {
                         $this->order->setShippingAddress($this->address);
-                        //$this->say('Ok! Identificamos seu endereço:');
-                        //$this->say($this->address->getFullAddress());
+                        $this->say('Ok! Identificamos seu endereço:');
+                        $this->say($this->address->getFullAddress());
                         $this->askAddressComplement();
                     } else {
                         $this->say('Parece que os items abaixo do seu endereço não foram informados. Pode por gentileza verificar?');

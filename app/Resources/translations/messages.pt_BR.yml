@@ -4,5 +4,6 @@ address:
     district: Bairro
     city: Cidade
     postcode: Cep
+    Uf: Estado
     mainAddress: Endereço Principal
     complement: Complemento

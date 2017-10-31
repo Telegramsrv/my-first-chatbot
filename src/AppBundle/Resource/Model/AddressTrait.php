@@ -55,6 +55,7 @@ trait AddressTrait
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Uf", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Assert\NotNull()
      */
     private $uf;
 

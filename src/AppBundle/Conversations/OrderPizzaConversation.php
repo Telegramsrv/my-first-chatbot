@@ -18,6 +18,7 @@ use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Facebook\Extensions\Element;
 use BotMan\Drivers\Facebook\Extensions\ElementButton;
 use BotMan\Drivers\Facebook\Extensions\GenericTemplate;
+use Symfony\Component\Validator\Constraints\Email;
 
 class OrderPizzaConversation extends Conversation
 {
@@ -211,7 +212,7 @@ class OrderPizzaConversation extends Conversation
 
                     global $kernel;
 
-                    if(!empty($this->bot->getMessage()->getPayload()['postback'])){
+                    if (!empty($this->bot->getMessage()->getPayload()['postback'])) {
 
                         $payload = $this->bot->getMessage()->getPayload()['postback']['payload'];
 
@@ -233,8 +234,7 @@ class OrderPizzaConversation extends Conversation
                         } else {
                             $this->stopsConversation = true;
                         }
-                    }
-                    else {
+                    } else {
                         $this->stopsConversation = true;
                     }
                 }
@@ -320,25 +320,23 @@ class OrderPizzaConversation extends Conversation
             $question,
             function (Answer $answer) use ($question) {
 
+                global $kernel;
+
                 $address = $answer->getText();
 
-                $results = AddressHelper::validate($address);
+                $results = $kernel->getContainer()->get('app.helper.address')->validateGoogleMaps($address);
 
                 if (!$results) {
                     $this->say('Endereço não encontrado.');
                     $this->repeat($question);
                 } else {
 
-                    global $kernel;
-
                     foreach ($results['results'][0]['address_components'] as $addressComponent) {
                         if (in_array('route', $addressComponent['types'])) {
                             $this->address->setStreet($addressComponent['long_name']);
                         }
                         if (in_array('street_number', $addressComponent['types'])) {
-                            $this->address->setStreet(
-                                $this->address->getStreet() . ', ' . $addressComponent['long_name']
-                            );
+                            $this->address->setNumber($addressComponent['long_name']);
                         }
                         if (in_array('sublocality_level_1', $addressComponent['types'])) {
                             $this->address->setDistrict($addressComponent['long_name']);
@@ -347,10 +345,8 @@ class OrderPizzaConversation extends Conversation
                             $this->address->setCity($addressComponent['long_name']);
                         }
                         if (in_array('administrative_area_level_1', $addressComponent['types'])) {
-
                             $uf = $kernel->getContainer()->get('doctrine')->getRepository(Uf::class)
                                 ->findOneBy(['sigla' => $addressComponent['short_name']]);
-
                             $this->address->setUf($uf);
                         }
                         if (in_array('postal_code', $addressComponent['types'])) {
@@ -358,9 +354,18 @@ class OrderPizzaConversation extends Conversation
                         }
                     }
 
-                    $this->order->setShippingAddress($this->address);
+                    $errors = $kernel->getContainer()->get('app.helper.address')->getStringErrorsFromEntity($this->address);
 
-                    $this->askAddressComplement();
+                    if (!$errors) {
+                        $this->order->setShippingAddress($this->address);
+                        $this->say('Ok! Identificamos seu endereço:');
+                        $this->say($this->address->getFullAddress());
+                        $this->askAddressComplement();
+                    } else {
+                        $this->say('Parece que os items abaixo do seu endereço não foram informados. Pode por gentileza verificar?');
+                        $this->say($errors);
+                        $this->repeat($question);
+                    }
                 }
             }
         );
@@ -390,13 +395,24 @@ class OrderPizzaConversation extends Conversation
         }
     }
 
+    // verificar se email ja pertence a outro usuário
     public function askEmail()
     {
         $question = Question::create('Informe seu e-mail:');
 
-        $this->ask($question, function (Answer $answer) {
-            $this->customer->setEmail($answer->getText());
-            $this->orderFinish();
+        $this->ask($question, function (Answer $answer) use ($question) {
+
+            global $kernel;
+
+            $valid = $kernel->getContainer()->get('validator')->validate($answer->getText(), new Email());
+
+            if (count($valid) > 0) {
+                $this->say('Me parece que o email informado não é valido.');
+                $this->repeat($question);
+            } else {
+                $this->customer->setEmail($answer->getText());
+                $this->orderFinish();
+            }
         });
     }
 
@@ -410,5 +426,7 @@ class OrderPizzaConversation extends Conversation
         $em->flush();
 
         $this->say('Pedido processado com sucesso.');
+
+        $this->stopsConversation = true;
     }
 }

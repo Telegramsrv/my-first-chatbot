@@ -1,0 +1,8 @@
+address:
+    street: Rua
+    number: Número
+    district: Bairro
+    city: Cidade
+    postcode: Cep
+    mainAddress: Endereço Principal
+    complement: Complemento

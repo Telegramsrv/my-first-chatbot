@@ -5,6 +5,7 @@ parameters:
     fb_token: "%env(FB_TOKEN)%"
     fb_secret: "%env(FB_SECRET)%"
     fb_verification:  "%env(FB_VERIFICATION)%"
+    conversation_cache_time: 30
 
 doctrine:
     dbal:

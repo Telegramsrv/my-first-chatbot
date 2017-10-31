@@ -33,6 +33,7 @@ class BotController extends Controller
         $this->botman->listen();
 
         return new Response('');
+        //return new Response('<html><body></body></html>');
     }
 
     private function start()

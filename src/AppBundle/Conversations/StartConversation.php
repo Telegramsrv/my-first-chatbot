@@ -12,9 +12,9 @@ class StartConversation extends Conversation
     {
         $this->bot->reply(
             ButtonTemplate::create('Clique em uma das opções abaixo:')
-                          ->addButton(ElementButton::create('Cardápio de Pizzas')->type('postback')->payload('order_pizza'))
-                          ->addButton(ElementButton::create('Informações')->type('postback')->payload('info'))
-                          ->addButton(ElementButton::create('Site')->url('http://google.com.br'))
+                ->addButton(ElementButton::create('Cardápio de Pizzas')->type('postback')->payload('order_pizza'))
+                ->addButton(ElementButton::create('Pedidos Realizados')->url('https://nc-firstchatbot.herokuapp.com/order-pizza'))
+                ->addButton(ElementButton::create('Informações')->type('postback')->payload('info'))
         );
     }
 

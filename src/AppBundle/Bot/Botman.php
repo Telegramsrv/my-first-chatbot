@@ -13,28 +13,32 @@ class Botman
     private $token;
     private $secret;
     private $verification;
+    private $conversationCacheTime;
 
     /**
      * Botman constructor.
      * @param $token
      * @param $secret
      * @param $verification
+     * @param $conversationCacheTime
      */
-    public function __construct($token, $secret, $verification)
+    public function __construct($token, $secret, $verification, $conversationCacheTime)
     {
         $this->token = $token;
         $this->secret = $secret;
         $this->verification = $verification;
+        $this->conversationCacheTime = $conversationCacheTime;
     }
 
     public function getBotman()
     {
         $config = [
             'facebook' => [
-                'token'        => $this->token,
-                'app_secret'   => $this->secret,
+                'token' => $this->token,
+                'app_secret' => $this->secret,
                 'verification' => $this->verification,
             ],
+            'conversation_cache_time' => $this->conversationCacheTime
         ];
 
         DriverManager::loadDriver(FacebookDriver::class);

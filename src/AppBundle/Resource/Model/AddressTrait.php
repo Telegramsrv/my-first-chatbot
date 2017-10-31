@@ -16,6 +16,13 @@ trait AddressTrait
     private $street;
 
     /**
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\GreaterThan(0)
+     */
+    private $number;
+
+    /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
@@ -211,5 +218,32 @@ trait AddressTrait
     {
         $this->uf = $uf;
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNumber()
+    {
+        return $this->number;
+    }
+
+    /**
+     * @param mixed $number
+     * @return AddressTrait
+     */
+    public function setNumber($number)
+    {
+        $this->number = $number;
+        return $this;
+    }
+
+    public function getFullAddress()
+    {
+        return $this->getStreet() . ', '
+            . $this->getNumber() . ', '
+            . $this->getDistrict() . ', '
+            . $this->getPostcode() . ', '
+            . $this->getUf()->getSigla();
     }
 }

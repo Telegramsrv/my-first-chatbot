@@ -6,9 +6,13 @@ parameters:
 services:
     app.botman:
         class: AppBundle\Bot\Botman
-        arguments: ['%fb_token%', '%fb_secret%', '%fb_verification%']
+        arguments: ['%fb_token%', '%fb_secret%', '%fb_verification%', '%conversation_cache_time%']
 
     app.user.canonicalizer.subscriber:
         class: AppBundle\EventListener\CanonicalizerSubscriber
         tags:
             - { name: doctrine.event_subscriber }
+
+    app.helper.address:
+        class: AppBundle\Helpers\AddressHelper
+        arguments: ['@validator', '@translator']

@@ -70,8 +70,8 @@
             </div>
             <div class="card-footer _text-center">
                 <div class="pagerfanta">
-                    {#<b>Exibindo {{ orders.currentPageOffsetStart }} a {{ orders.currentPageOffsetEnd }}
-                        de {{ orders.nbResults }} registros</b>#}
+                    <b>Exibindo {{ orders.currentPageOffsetStart }} a {{ orders.currentPageOffsetEnd }}
+                        de {{ orders.nbResults }} registros</b>
                     {{ pagerfanta(orders, 'twitter_bootstrap3',{
                         routeName: 'order_pizza',
                         routeParams: app.request.query.all

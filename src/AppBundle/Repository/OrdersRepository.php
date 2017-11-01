@@ -21,15 +21,15 @@ class OrdersRepository extends EntityRepository
         $qb
             ->distinct(true)
             ->innerJoin('o.orderItems', 'order_items')
-            ->addSelect('order_items')
+            //->addSelect('order_items')
             ->innerJoin('order_items.pizza', 'pizza')
-            ->addSelect('pizza')
+            //->addSelect('pizza')
             ->innerJoin('o.shippingAddress', 'shipping_address')
             ->addSelect('shipping_address')
             ->innerJoin('o.customer', 'customer')
             ->addSelect('customer')
-            ->groupBy('o.id')
-            ->orderBy('o.createdAt', 'DESC');
+            ->groupBy('o', 'order_items')
+            ->orderBy('o.id', 'DESC');
 
         return $qb->getQuery();
     }

@@ -204,41 +204,36 @@ class OrderPizzaConversation extends Conversation
                 );
             }
 
-            $this->bot->reply($generenicTemplate);
+            $this->ask($generenicTemplate, function (Answer $answer) {
 
-            $this->bot->storeConversation(
-                $this,
-                function () {
+                global $kernel;
 
-                    global $kernel;
+                if (!empty($answer->getMessage()->getPayload()['postback'])) {
 
-                    if (!empty($this->bot->getMessage()->getPayload()['postback'])) {
+                    $payload = $answer->getMessage()->getPayload()['postback']['payload'];
 
-                        $payload = $this->bot->getMessage()->getPayload()['postback']['payload'];
+                    if (substr($payload, 0, 21) == 'ORDER_PIZZA_ADD_ITEM_') {
+                        //ORDER_PIZZA_ADD_ITEM_{id}
+                        $exp = explode('_', $payload);
 
-                        if (substr($payload, 0, 21) == 'ORDER_PIZZA_ADD_ITEM_') {
-                            //ORDER_PIZZA_ADD_ITEM_{id}
-                            $exp = explode('_', $payload);
+                        $pizzaSelected = $kernel->getContainer()->get('doctrine')->getRepository(Pizza::class)
+                            ->findOneBy(['id' => $exp[4]]);
 
-                            $pizzaSelected = $kernel->getContainer()->get('doctrine')->getRepository(Pizza::class)
-                                ->findOneBy(['id' => $exp[4]]);
+                        $this->currentOrdemItem = new OrderItems();
+                        $this->currentOrdemItem
+                            ->setPizza($pizzaSelected)
+                            ->setUnitPrice($pizzaSelected->getPrice());
 
-                            $this->currentOrdemItem = new OrderItems();
-                            $this->currentOrdemItem
-                                ->setPizza($pizzaSelected)
-                                ->setUnitPrice($pizzaSelected->getPrice());
+                        $this->order->addOrderItem($this->currentOrdemItem);
 
-                            $this->order->addOrderItem($this->currentOrdemItem);
-
-                            $this->askQuantity($pizzaSelected);
-                        } else {
-                            $this->stopsConversation = true;
-                        }
+                        $this->askQuantity($pizzaSelected);
                     } else {
                         $this->stopsConversation = true;
                     }
+                } else {
+                    $this->stopsConversation = true;
                 }
-            );
+            });
 
         } else {
             $this->say('Desculpe, não existem pizzas para essa categoria.');

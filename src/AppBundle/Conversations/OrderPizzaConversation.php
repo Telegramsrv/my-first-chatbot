@@ -18,6 +18,10 @@ use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Facebook\Extensions\Element;
 use BotMan\Drivers\Facebook\Extensions\ElementButton;
 use BotMan\Drivers\Facebook\Extensions\GenericTemplate;
+use BotMan\Drivers\Facebook\Extensions\ReceiptAddress;
+use BotMan\Drivers\Facebook\Extensions\ReceiptElement;
+use BotMan\Drivers\Facebook\Extensions\ReceiptSummary;
+use BotMan\Drivers\Facebook\Extensions\ReceiptTemplate;
 use Symfony\Component\Validator\Constraints\Email;
 
 class OrderPizzaConversation extends Conversation
@@ -309,6 +313,8 @@ class OrderPizzaConversation extends Conversation
 
         $this->say($list);
 
+        //$this->showOrderResume(false);
+
         $question = Question::create('Qual o endereço de entrega?');
 
         $this->ask(
@@ -411,14 +417,59 @@ class OrderPizzaConversation extends Conversation
         });
     }
 
+    private function showOrderResume()
+    {
+        $receipt = ReceiptTemplate::create()
+            ->recipientName($this->order->getCustomer()->getFullName())
+            ->orderUrl('https://nc-firstchatbot.herokuapp.com/order-pizza')
+            ->timestamp($this->order->getCreatedAt()->getTimestamp())
+            ->orderNumber($this->order->getId())
+            ->currency('USD')
+            ->paymentMethod('A VISTA');
+
+        foreach ($this->order->getOrderItems() as $orderItem) {
+            $receipt->addElement(
+                ReceiptElement::create($orderItem->getPizza()->getDescription())
+                    ->subtitle($orderItem->getPizza()->getSubtitle())
+                    ->quantity($orderItem->getQuantity())
+                    ->price($orderItem->getPizza()->getPrice())
+                    ->image($orderItem->getPizza()->getImage())
+                    ->currency('USD')
+            );
+        }
+        
+        $receipt->addAddress(
+            ReceiptAddress::create()
+                ->street1($this->order->getShippingAddress()->getStreet())
+                ->city($this->order->getShippingAddress()->getCity())
+                ->postalCode($this->order->getShippingAddress()->getPostcode())
+                ->state($this->order->getShippingAddress()->getUf()->getSigla())
+                ->country('BRASIL')
+        );
+
+        $receipt->addSummary(
+            ReceiptSummary::create()
+                ->subtotal($this->order->getItemsTotal())
+                ->shippingCost(0)
+                ->totalTax(0)
+                ->totalCost($this->order->getItemsTotal())
+        );
+
+        $this->bot->reply($receipt);
+    }
+
     private function orderFinish()
     {
         global $kernel;
 
         $em = $kernel->getContainer()->get('doctrine.orm.default_entity_manager');
 
-        $em->merge($this->order);
+        $this->order = $em->merge($this->order);
         $em->flush();
+
+        dump($this->order);
+
+        $this->showOrderResume();
 
         $this->say('Pedido processado com sucesso.');
 

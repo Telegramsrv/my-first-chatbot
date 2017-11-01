@@ -16,3 +16,7 @@ services:
     app.helper.address:
         class: AppBundle\Helpers\AddressHelper
         arguments: ['@validator', '@translator']
+
+    app.helper.pagination:
+        class: AppBundle\Helpers\PaginationHelper
+        autowire: true

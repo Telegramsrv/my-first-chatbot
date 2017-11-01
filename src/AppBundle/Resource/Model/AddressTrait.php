@@ -244,7 +244,15 @@ trait AddressTrait
         return $this->getStreet() . ', '
             . $this->getNumber() . ', '
             . $this->getDistrict() . ', '
+            . $this->getCity() . ', '
             . $this->getPostcode() . ', '
             . $this->getUf()->getSigla();
+    }
+
+    public function getShortAddress()
+    {
+        return $this->getStreet() . ', '
+            . $this->getNumber() . ', '
+            . $this->getDistrict();
     }
 }

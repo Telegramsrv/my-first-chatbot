@@ -1,3 +1,10 @@
+new: Novo
+cancelled: Cancelado
+awaiting_payment: Aguardando Pagamento
+paid: Pago
+ready: Pronto
+shipped: Enviado
+
 address:
     street: Rua
     number: Número

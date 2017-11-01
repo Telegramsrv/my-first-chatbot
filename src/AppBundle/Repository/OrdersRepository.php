@@ -27,7 +27,9 @@ class OrdersRepository extends EntityRepository
             ->innerJoin('o.shippingAddress', 'shipping_address')
             ->addSelect('shipping_address')
             ->innerJoin('o.customer', 'customer')
-            ->addSelect('customer');
+            ->addSelect('customer')
+            ->groupBy('o.id')
+            ->orderBy('o.createdAt', 'DESC');
 
         return $qb->getQuery();
     }

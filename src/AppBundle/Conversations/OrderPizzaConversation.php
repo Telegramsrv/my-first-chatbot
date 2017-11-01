@@ -437,7 +437,7 @@ class OrderPizzaConversation extends Conversation
                     ->currency('USD')
             );
         }
-        
+
         $receipt->addAddress(
             ReceiptAddress::create()
                 ->street1($this->order->getShippingAddress()->getStreet())

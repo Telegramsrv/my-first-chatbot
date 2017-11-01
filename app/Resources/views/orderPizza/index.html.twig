@@ -57,7 +57,7 @@
                                     </ul>
                                 {#</div>#}
                             </td>
-                            <td>{{ order.itemsTotal|number_format }}</td>
+                            <td>R$: {{ order.itemsTotal|number_format }}</td>
                             <td>{{ order.shippingAddress.shortAddress }}</td>
                             <td>{{ order.shippingAddress.complement }}</td>
                             <td><span class="badge badge-info">{{ order.shippingState|trans }}</span></td>

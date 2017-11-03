@@ -507,8 +507,6 @@ class OrderPizzaConversation extends Conversation
         $this->order = $em->merge($this->order);
         $em->flush();
 
-        dump($this->order);
-
         $this->showOrderResume();
 
         $this->say('Pedido processado com sucesso.');

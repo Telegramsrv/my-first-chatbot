@@ -22,7 +22,7 @@ class OrderPizzaController extends Controller
 
         $orders = $this->getDoctrine()->getRepository(Orders::class)->findLatest($pagination);
 
-        return $this->render('orderPizza/index.html.twig', [
+        return $this->render('orderPizza/cards.html.twig', [
             'orders' => $orders
         ]);
     }

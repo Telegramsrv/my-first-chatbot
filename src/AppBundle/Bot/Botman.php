@@ -38,7 +38,12 @@ class Botman
                 'app_secret' => $this->secret,
                 'verification' => $this->verification,
             ],
-            'conversation_cache_time' => $this->conversationCacheTime
+            'config' => [
+                'conversation_cache_time' => $this->conversationCacheTime
+            ],
+            'botman' => [
+                'conversation_cache_time' => $this->conversationCacheTime
+            ]
         ];
 
         DriverManager::loadDriver(FacebookDriver::class);

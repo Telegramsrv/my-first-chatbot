@@ -10,6 +10,7 @@ use AppBundle\Entity\Orders;
 use AppBundle\Entity\Pizza;
 use AppBundle\Entity\Uf;
 use AppBundle\Helpers\AddressHelper;
+use BotMan\BotMan\Messages\Attachments\Location;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
@@ -313,8 +314,12 @@ class OrderPizzaConversation extends Conversation
 
         $this->say($list);
 
-        //$this->showOrderResume(false);
+        //$this->shareAddress();
+        $this->textAddress();
+    }
 
+    public function textAddress()
+    {
         $question = Question::create('Qual o endereço de entrega?');
 
         $this->ask(
@@ -327,49 +332,84 @@ class OrderPizzaConversation extends Conversation
 
                 $results = $kernel->getContainer()->get('app.helper.address')->validateGoogleMaps($address);
 
-                if (!$results) {
-                    $this->say('Endereço não encontrado.');
-                    $this->repeat($question);
-                } else {
-
-                    foreach ($results['results'][0]['address_components'] as $addressComponent) {
-                        if (in_array('route', $addressComponent['types'])) {
-                            $this->address->setStreet($addressComponent['long_name']);
-                        }
-                        if (in_array('street_number', $addressComponent['types'])) {
-                            $this->address->setNumber($addressComponent['long_name']);
-                        }
-                        if (in_array('sublocality_level_1', $addressComponent['types'])) {
-                            $this->address->setDistrict($addressComponent['long_name']);
-                        }
-                        if (in_array('administrative_area_level_2', $addressComponent['types'])) {
-                            $this->address->setCity($addressComponent['long_name']);
-                        }
-                        if (in_array('administrative_area_level_1', $addressComponent['types'])) {
-                            $uf = $kernel->getContainer()->get('doctrine')->getRepository(Uf::class)
-                                ->findOneBy(['sigla' => $addressComponent['short_name']]);
-                            $this->address->setUf($uf);
-                        }
-                        if (in_array('postal_code', $addressComponent['types'])) {
-                            $this->address->setPostcode($addressComponent['long_name']);
-                        }
-                    }
-
-                    $errors = $kernel->getContainer()->get('app.helper.address')->getStringErrorsFromEntity($this->address);
-
-                    if (!$errors) {
-                        $this->order->setShippingAddress($this->address);
-                        $this->say('Ok! Identificamos seu endereço:');
-                        $this->say($this->address->getFullAddress());
-                        $this->askAddressComplement();
-                    } else {
-                        $this->say('Parece que os items abaixo do seu endereço não foram informados. Pode por gentileza verificar?');
-                        $this->say($errors);
-                        $this->repeat($question);
-                    }
-                }
+                $this->handlerAddressResults($results, $question);
             }
         );
+    }
+
+    public function shareAddress()
+    {
+        $question = Question::create('Envie a localização de entrega do pedido clicando no botão abaixo:');
+
+        $this->askForLocation(
+            $question,
+            function (Location $location) use ($question) {
+
+                global $kernel;
+
+                $results = $kernel->getContainer()->get('app.helper.address')
+                    ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
+
+                $this->handlerAddressResults($results, $question);
+            },
+            null,
+            [
+                'message' => [
+                    'quick_replies' => json_encode([
+                        [
+                            'content_type' => 'location'
+                        ]
+                    ])
+                ]
+            ]
+        );
+    }
+
+    private function handlerAddressResults($results, $question)
+    {
+        global $kernel;
+
+        if (!$results) {
+            $this->say('Endereço não encontrado.');
+            $this->repeat($question);
+        } else {
+
+            foreach ($results['results'][0]['address_components'] as $addressComponent) {
+                if (in_array('route', $addressComponent['types'])) {
+                    $this->address->setStreet($addressComponent['long_name']);
+                }
+                if (in_array('street_number', $addressComponent['types'])) {
+                    $this->address->setNumber($addressComponent['long_name']);
+                }
+                if (in_array('sublocality_level_1', $addressComponent['types'])) {
+                    $this->address->setDistrict($addressComponent['long_name']);
+                }
+                if (in_array('administrative_area_level_2', $addressComponent['types'])) {
+                    $this->address->setCity($addressComponent['long_name']);
+                }
+                if (in_array('administrative_area_level_1', $addressComponent['types'])) {
+                    $uf = $kernel->getContainer()->get('doctrine')->getRepository(Uf::class)
+                        ->findOneBy(['sigla' => $addressComponent['short_name']]);
+                    $this->address->setUf($uf);
+                }
+                if (in_array('postal_code', $addressComponent['types'])) {
+                    $this->address->setPostcode($addressComponent['long_name']);
+                }
+            }
+
+            $errors = $kernel->getContainer()->get('app.helper.address')->getStringErrorsFromEntity($this->address);
+
+            if (!$errors) {
+                $this->order->setShippingAddress($this->address);
+                $this->say('Ok! Segue o endereço informado:');
+                $this->say($this->address->getFullAddress());
+                $this->askAddressComplement();
+            } else {
+                $this->say('Parece que os items abaixo do seu endereço não foram identificados. Pode por gentileza verificar?');
+                $this->say($errors);
+                $this->repeat($question);
+            }
+        }
     }
 
     public function askAddressComplement()

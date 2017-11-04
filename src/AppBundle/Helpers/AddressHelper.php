@@ -33,7 +33,7 @@ class AddressHelper
 
     public function validateGoogleMaps($address = '', $lat = '', $lon = '')
     {
-        if (empty($address) && empty($lat) && empty($long)) {
+        if (empty($address) && empty($lat) && empty($lon)) {
             return false;
         }
 

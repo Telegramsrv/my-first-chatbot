@@ -339,18 +339,20 @@ class OrderPizzaConversation extends Conversation
 
     public function shareAddress()
     {
-        $question = Question::create('Envie a localização de entrega do pedido clicando no botão abaixo:');
-
         $this->askForLocation(
-            $question,
-            function (Location $location) use ($question) {
+            'Envie a localização de entrega do pedido clicando no botão abaixo:',
+            function (Location $location) {
 
-                global $kernel;
+                $this->say('Received: '.print_r($location, true));
+
+                /*global $kernel;
 
                 $results = $kernel->getContainer()->get('app.helper.address')
                     ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
 
-                $this->handlerAddressResults($results, $question);
+                $kernel->getContainer()->get('logger')->info('Location', [$location, $results]);
+
+                $this->handlerAddressResults($results);*/
             },
             null,
             [
@@ -361,17 +363,20 @@ class OrderPizzaConversation extends Conversation
                         ]
                     ])
                 ]
-            ]
-        );
+            ]);
     }
 
-    private function handlerAddressResults($results, $question)
+    private function handlerAddressResults($results, $question = null)
     {
         global $kernel;
 
         if (!$results) {
             $this->say('Endereço não encontrado.');
-            $this->repeat($question);
+            if ($question) {
+                $this->repeat($question);
+            } else {
+                $this->repeat();
+            }
         } else {
 
             foreach ($results['results'][0]['address_components'] as $addressComponent) {

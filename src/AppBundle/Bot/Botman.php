@@ -6,6 +6,9 @@ use BotMan\BotMan\BotManFactory;
 use BotMan\BotMan\Cache\SymfonyCache;
 use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\Drivers\Facebook\FacebookDriver;
+use Doctrine\Common\Cache\SQLite3Cache;
+use SQLite3;
+use Symfony\Component\Cache\Adapter\DoctrineAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class Botman
@@ -38,12 +41,21 @@ class Botman
                 'app_secret' => $this->secret,
                 'verification' => $this->verification,
             ],
-            'conversation_cache_time' => $this->conversationCacheTime
+            'config' => [
+                'conversation_cache_time' => $this->conversationCacheTime
+            ],
+            'botman' => [
+                'conversation_cache_time' => $this->conversationCacheTime
+            ]
         ];
 
         DriverManager::loadDriver(FacebookDriver::class);
 
         $adapter = new FilesystemAdapter();
+
+        /*$provider = new SQLite3Cache(new SQLite3(__DIR__.'/../../../var/cache/data.sqlite'), 'chatbot_fb');
+
+        $adapter = new DoctrineAdapter($provider, $namespace = '', $defaultLifetime = 0);*/
 
         return BotManFactory::create($config, new SymfonyCache($adapter));
     }

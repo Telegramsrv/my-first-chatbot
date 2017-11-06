@@ -31,11 +31,24 @@ class AddressHelper
         $this->translator = $translator;
     }
 
-    public function validateGoogleMaps($address)
+    public function validateGoogleMaps($address = '', $lat = '', $lon = '')
     {
-        $address = urlencode($address);
+        if (empty($address) && empty($lat) && empty($lon)) {
+            return false;
+        }
 
-        $url = 'http://maps.googleapis.com/maps/api/geocode/json?address=' . $address . '&sensor=false';
+        $url = '';
+        $api = 'http://maps.googleapis.com/maps/api/geocode/json';
+
+        if (!empty($address)) {
+
+            $address = urlencode($address);
+            $url = $api . '?address=' . $address . '&sensor=false';
+
+        } else if (!empty($lat) && !empty($lon)) {
+
+            $url = $api . '?latlng=' . $lat . ',' . $lon . '&sensor=false';
+        }
 
         $geocode = file_get_contents($url);
 

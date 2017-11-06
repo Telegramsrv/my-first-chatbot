@@ -52,16 +52,16 @@
         },
         {
             "name": "botman/botman",
-            "version": "2.1.2",
+            "version": "2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/botman/botman.git",
-                "reference": "3f4be2c47ed3ed30dd04f884d9fa0956e97b93ae"
+                "reference": "425f72a05f404ba078842aff1fc5b7268e679302"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/botman/botman/zipball/3f4be2c47ed3ed30dd04f884d9fa0956e97b93ae",
-                "reference": "3f4be2c47ed3ed30dd04f884d9fa0956e97b93ae",
+                "url": "https://api.github.com/repos/botman/botman/zipball/425f72a05f404ba078842aff1fc5b7268e679302",
+                "reference": "425f72a05f404ba078842aff1fc5b7268e679302",
                 "shasum": ""
             },
             "require": {
@@ -116,7 +116,7 @@
                 "bot",
                 "chatbot"
             ],
-            "time": "2017-10-09T18:35:10+00:00"
+            "time": "2017-10-18T08:54:29+00:00"
         },
         {
             "name": "botman/driver-facebook",

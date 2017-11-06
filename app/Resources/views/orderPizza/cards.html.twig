@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        <div class="card">
+            <h5 class="card-header">
+                Pedidos de Pizza
+            </h5>
+            <div class="card-body">
+
+                <div class="_card-deck">
+                    {% for order in orders %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    #{{ order.id }} - {{ order.customer.fullName }}
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="card-text">
+                                            <strong>Solicitado em:</strong> {{ order.createdAt|date('d/m/Y H:i') }} <br>
+                                            <strong>Status:</strong> <span
+                                                    class="badge badge-info">{{ order.state|trans }}</span> <br>
+                                            <strong>Tel:</strong> {{ order.customer.phoneNumber }} <br>
+                                            <strong>Email:</strong> {{ order.customer.email }} <br>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p class="card-text">
+                                            <strong>Endereço:</strong> {{ order.shippingAddress.fullAddress }} <br>
+                                            <strong>Complemento:</strong> {{ order.shippingAddress.complement }} <br>
+                                            <strong>Envio:</strong> <span
+                                                    class="badge badge-info">{{ order.shippingState|trans }}</span>
+                                            <br>
+                                            <strong>Pagamento:</strong> <span
+                                                    class="badge badge-warning">{{ order.paymentState|trans }}</span>
+                                            <br>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table _table-sm table-responsive-md">
+                                <thead class="_thead-light">
+                                <tr>
+                                    <th scope="col">Imagem</th>
+                                    <th scope="col">Produto</th>
+                                    <th scope="col">Preço</th>
+                                    {#<th scope="col">Subtotal</th>#}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in order.orderItems %}
+                                    <tr>
+                                        <th>
+                                            <img src="{{ item.pizza.image }}" alt="{{ item.pizza.description }}"
+                                                 style="max-width: 72px">
+                                        </th>
+                                        <td valign="middle">{{ item.pizza.description }}
+                                            <span class="badge badge-info badge-pill">
+                                                {{ item.quantity }}x
+                                            </span>
+                                        </td>
+                                        <td>R$: {{ item.unitPrice|number_format }}</td>
+                                        {#<td>R$: {{ item.total|number_format }}</td>#}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="card-footer text-center">
+                                <h5 class="card-title">Total: R$: {{ order.itemsTotal|number_format }}</h5>
+                            </div>
+                        </div>
+                        <br>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+            <div class="card-footer _text-center">
+                <div class="pagerfanta">
+                    <b>Exibindo {{ orders.currentPageOffsetStart }} a {{ orders.currentPageOffsetEnd }}
+                        de {{ orders.nbResults }} registros</b>
+                    {{ pagerfanta(orders, 'twitter_bootstrap3',{
+                        routeName: 'order_pizza',
+                        routeParams: app.request.query.all
+                    }) }}
+                </div><!-- /# end pagination -->
+            </div>
+        </div>
+    </div>
+{% endblock %}

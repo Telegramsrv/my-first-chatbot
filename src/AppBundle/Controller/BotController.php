@@ -66,7 +66,6 @@ class BotController extends Controller
             Menu::CALLBACK_INFO,
             function (Botman $bot) {
                 $bot->reply('Estamos na Rua Coronel Mariano de Mello 671 JD Anhanguera, Ribeirão Preto. Tel: (11) 93847829.');
-                $bot->startConversation(new StartConversation());
             }
         );
 

@@ -39,7 +39,7 @@ class BotController extends Controller
     private function start()
     {
         $this->botman->hears(
-            Menu::CALLBACK_START,
+            Menu::CALLBACK_START . '|' . Menu::CALLBACK_MAIN_MENU,
             function (Botman $bot) {
                 $bot->startConversation(new StartConversation());
             }

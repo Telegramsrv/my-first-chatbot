@@ -15,6 +15,7 @@ use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\Drivers\Facebook\Extensions\ButtonTemplate;
 use BotMan\Drivers\Facebook\Extensions\Element;
 use BotMan\Drivers\Facebook\Extensions\ElementButton;
 use BotMan\Drivers\Facebook\Extensions\GenericTemplate;
@@ -504,5 +505,10 @@ class OrderPizzaConversation extends BaseConversation
         $this->showOrderResume();
 
         $this->say('Pedido processado com sucesso.');
+
+        $this->say(
+            ButtonTemplate::create('Veja todos os pedidos clicando na opção abaixo:')
+                ->addButton(ElementButton::create('Ver Pedidos')->url('https://nc-firstchatbot.herokuapp.com/order-pizza'))
+        );
     }
 }

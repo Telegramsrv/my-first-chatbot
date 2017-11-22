@@ -185,8 +185,8 @@ class OrderPizzaConversation extends BaseConversation
                         ->subtitle($pizza->getSubtitle())
                         ->image($pizza->getImage())
                         ->addButtons([
-                            ElementButton::create('Detalhes')
-                                ->url($pizza->getUrlDetail()),
+//                            ElementButton::create('Detalhes')
+//                                ->url($pizza->getUrlDetail()),
                             ElementButton::create('Adicionar')
                                 ->type('postback')
                                 ->payload(self::ORDER_PIZZA_ADD_ITEM . $pizza->getId())

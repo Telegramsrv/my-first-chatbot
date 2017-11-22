@@ -2,6 +2,7 @@
 
 namespace AppBundle\Conversations;
 
+use AppBundle\Bot\Menu;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Customer;
@@ -9,9 +10,7 @@ use AppBundle\Entity\OrderItems;
 use AppBundle\Entity\Orders;
 use AppBundle\Entity\Pizza;
 use AppBundle\Entity\Uf;
-use AppBundle\Helpers\AddressHelper;
 use BotMan\BotMan\Messages\Attachments\Location;
-use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
@@ -25,14 +24,9 @@ use BotMan\Drivers\Facebook\Extensions\ReceiptSummary;
 use BotMan\Drivers\Facebook\Extensions\ReceiptTemplate;
 use Symfony\Component\Validator\Constraints\Email;
 
-class OrderPizzaConversation extends Conversation
+class OrderPizzaConversation extends BaseConversation
 {
     const ORDER_SELECT_PIZZA_FINISHED = 'order_select_pizza_finished';
-
-    /**
-     * @var bool
-     */
-    protected $stopsConversation = false;
 
     /**
      * @var int
@@ -74,11 +68,6 @@ class OrderPizzaConversation extends Conversation
     {
         $this->setUserInformation();
         $this->askOrderCategory();
-    }
-
-    public function stopsConversation(IncomingMessage $message)
-    {
-        return $this->stopsConversation;
     }
 
     private function setUserInformation()
@@ -232,11 +221,7 @@ class OrderPizzaConversation extends Conversation
                         $this->order->addOrderItem($this->currentOrdemItem);
 
                         $this->askQuantity($pizzaSelected);
-                    } else {
-                        $this->stopsConversation = true;
                     }
-                } else {
-                    $this->stopsConversation = true;
                 }
             });
 
@@ -343,7 +328,7 @@ class OrderPizzaConversation extends Conversation
             'Envie a localização de entrega do pedido clicando no botão abaixo:',
             function (Location $location) {
 
-                $this->say('Received: '.print_r($location, true));
+                $this->say('Received: ' . print_r($location, true));
 
                 /*global $kernel;
 
@@ -515,7 +500,5 @@ class OrderPizzaConversation extends Conversation
         $this->showOrderResume();
 
         $this->say('Pedido processado com sucesso.');
-
-        $this->stopsConversation = true;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Bot\Menu;
 use AppBundle\Conversations\OrderPizzaConversation;
 use AppBundle\Conversations\StartConversation;
-use AppBundle\Helpers\AddressHelper;
 use BotMan\BotMan\BotMan;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -39,7 +39,7 @@ class BotController extends Controller
     private function start()
     {
         $this->botman->hears(
-            'olá|oi|ei|hi',
+            Menu::CALLBACK_START,
             function (Botman $bot) {
                 $bot->startConversation(new StartConversation());
             }
@@ -51,7 +51,7 @@ class BotController extends Controller
     private function orderPizza()
     {
         $this->botman->hears(
-            'order_pizza',
+            Menu::CALLBACK_ORDER_PIZZA,
             function (Botman $bot) {
                 $bot->startConversation(new OrderPizzaConversation());
             }
@@ -63,7 +63,7 @@ class BotController extends Controller
     private function info()
     {
         $this->botman->hears(
-            'info',
+            Menu::CALLBACK_INFO,
             function (Botman $bot) {
                 $bot->reply('Estamos na Rua Coronel Mariano de Mello 671 JD Anhanguera, Ribeirão Preto. Tel: (11) 93847829.');
                 $bot->startConversation(new StartConversation());
@@ -92,7 +92,9 @@ class BotController extends Controller
     {
         $address = urlencode('Rua orminda machado duarte n 11 vila velha');
 
-        $results = AddressHelper::validate($address);
+        $addressHelper = $this->get('app.helper.address');
+
+        $results = $addressHelper->validateGoogleMaps($address);
 
         if ($results) {
             var_dump($results['results'][0]['address_components']);

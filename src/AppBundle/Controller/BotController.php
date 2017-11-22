@@ -97,8 +97,8 @@ class BotController extends Controller
         $results = $addressHelper->validateGoogleMaps($address);
 
         if ($results) {
-            var_dump($results['results'][0]['address_components']);
 
+            var_dump($results['results'][0]['address_components']);
 
             foreach ($results['results'][0]['address_components'] as $addressComponent) {
                 if (in_array('route', $addressComponent['types'])) {
@@ -117,6 +117,9 @@ class BotController extends Controller
                     var_dump($addressComponent['short_name']);
                 }
                 if (in_array('postal_code', $addressComponent['types'])) {
+                    var_dump($addressComponent['long_name']);
+                }
+                if (in_array('country', $addressComponent['types'])) {
                     var_dump($addressComponent['long_name']);
                 }
             }

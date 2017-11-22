@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints\Email;
 class OrderPizzaConversation extends BaseConversation
 {
     const ORDER_SELECT_PIZZA_FINISHED = 'order_select_pizza_finished';
-
+    const ORDER_PIZZA_ADD_ITEM = 'order_pizza_add_item_';
     /**
      * @var int
      */
@@ -132,7 +132,6 @@ class OrderPizzaConversation extends BaseConversation
                         $this->say('Ok, ' . $answer->getText() . ' selecionado.');
                         $this->askPizzaItem();
                     }
-
                 }
                 /*else if (!empty($answer->getText())) {
 
@@ -173,29 +172,26 @@ class OrderPizzaConversation extends BaseConversation
 
             /** @var Pizza $pizza */
             foreach ($pizzas as $pizza) {
-                $generenicTemplate->addElements(
-                    [
-                        Element::create(
-                            'COD: ' . $pizza->getCode() . ' R$: ' . number_format(
-                                $pizza->getPrice(),
-                                2,
-                                ',',
-                                '.'
-                            ) . ' ' . $pizza->getDescription()
-                        )
-                            ->subtitle($pizza->getSubtitle())
-                            ->image($pizza->getImage())
-                            ->addButton(
-                                ElementButton::create('Detalhes')->url($pizza->getUrlDetail())
-                            )
-                            ->addButton(
-                                ElementButton::create('Adicionar')
-                                    ->type('postback')
-                                    ->payload('ORDER_PIZZA_ADD_ITEM_' . $pizza->getId())
-                            )
-                        ,
-                    ]
-                );
+                $generenicTemplate->addElements([
+                    Element::create(
+                        'COD: ' . $pizza->getCode() . ' R$: ' . number_format(
+                            $pizza->getPrice(),
+                            2,
+                            ',',
+                            '.'
+                        ) . ' ' . $pizza->getDescription()
+                    )
+                        ->subtitle($pizza->getSubtitle())
+                        ->image($pizza->getImage())
+                        ->addButtons([
+                            ElementButton::create('Detalhes')
+                                ->url($pizza->getUrlDetail()),
+                            ElementButton::create('Adicionar')
+                                ->type('postback')
+                                ->payload(self::ORDER_PIZZA_ADD_ITEM . $pizza->getId())
+                        ])
+                    ,
+                ]);
             }
 
             $this->ask($generenicTemplate, function (Answer $answer) {
@@ -206,8 +202,8 @@ class OrderPizzaConversation extends BaseConversation
 
                     $payload = $answer->getMessage()->getPayload()['postback']['payload'];
 
-                    if (substr($payload, 0, 21) == 'ORDER_PIZZA_ADD_ITEM_') {
-                        //ORDER_PIZZA_ADD_ITEM_{id}
+                    if (substr($payload, 0, 21) == self::ORDER_PIZZA_ADD_ITEM) {
+
                         $exp = explode('_', $payload);
 
                         $pizzaSelected = $kernel->getContainer()->get('doctrine')->getRepository(Pizza::class)
@@ -224,7 +220,6 @@ class OrderPizzaConversation extends BaseConversation
                     }
                 }
             });
-
         } else {
             $this->say('Desculpe, não existem pizzas para essa categoria.');
         }
@@ -364,6 +359,8 @@ class OrderPizzaConversation extends BaseConversation
             }
         } else {
 
+            $country = '';
+
             foreach ($results['results'][0]['address_components'] as $addressComponent) {
                 if (in_array('route', $addressComponent['types'])) {
                     $this->address->setStreet($addressComponent['long_name']);
@@ -385,19 +382,26 @@ class OrderPizzaConversation extends BaseConversation
                 if (in_array('postal_code', $addressComponent['types'])) {
                     $this->address->setPostcode($addressComponent['long_name']);
                 }
+                if (in_array('country', $addressComponent['types'])) {
+                    $country = $addressComponent['short_name'];
+                }
             }
 
-            $errors = $kernel->getContainer()->get('app.helper.address')->getStringErrorsFromEntity($this->address);
-
-            if (!$errors) {
-                $this->order->setShippingAddress($this->address);
-                $this->say('Ok! Segue o endereço informado:');
-                $this->say($this->address->getFullAddress());
-                $this->askAddressComplement();
+            if ($country <> 'BR') {
+                $this->say('Desculpe, não atendemos na sua localização.');
             } else {
-                $this->say('Parece que os items abaixo do seu endereço não foram identificados. Pode por gentileza verificar?');
-                $this->say($errors);
-                $this->repeat($question);
+                $errors = $kernel->getContainer()->get('app.helper.address')->getStringErrorsFromEntity($this->address);
+
+                if (!$errors) {
+                    $this->order->setShippingAddress($this->address);
+                    $this->say('Ok! Segue o endereço informado:');
+                    $this->say($this->address->getFullAddress());
+                    $this->askAddressComplement();
+                } else {
+                    $this->say('Parece que os items abaixo do seu endereço não foram identificados. Pode por gentileza verificar?');
+                    $this->say($errors);
+                    $this->repeat($question);
+                }
             }
         }
     }
@@ -474,7 +478,7 @@ class OrderPizzaConversation extends BaseConversation
                 ->city($this->order->getShippingAddress()->getCity())
                 ->postalCode($this->order->getShippingAddress()->getPostcode())
                 ->state($this->order->getShippingAddress()->getUf()->getSigla())
-                ->country('BRASIL')
+                ->country('BRAZIL')
         );
 
         $receipt->addSummary(

@@ -293,8 +293,8 @@ class OrderPizzaConversation extends BaseConversation
 
         $this->say($list);
 
-        //$this->shareAddress();
-        $this->textAddress();
+        $this->shareAddress();
+        //$this->textAddress();
     }
 
     public function textAddress()

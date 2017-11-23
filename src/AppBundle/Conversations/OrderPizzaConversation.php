@@ -388,7 +388,7 @@ class OrderPizzaConversation extends BaseConversation
                 }
             }
 
-            if ($country <> 'BR') {
+            if (!empty($country) && $country <> 'BR') {
                 $this->say('Desculpe, não atendemos na sua localização.');
             } else {
                 $errors = $kernel->getContainer()->get('app.helper.address')->getStringErrorsFromEntity($this->address);

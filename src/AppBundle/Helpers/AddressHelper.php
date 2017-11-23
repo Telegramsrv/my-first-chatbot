@@ -38,16 +38,16 @@ class AddressHelper
         }
 
         $url = '';
-        $api = 'http://maps.googleapis.com/maps/api/geocode/json';
+        $api = 'http://maps.googleapis.com/maps/api/geocode/json?region=BR';
 
         if (!empty($address)) {
 
             $address = urlencode($address);
-            $url = $api . '?address=' . $address . '&sensor=false';
+            $url = $api . '&address=' . $address . '';
 
         } else if (!empty($lat) && !empty($lon)) {
 
-            $url = $api . '?latlng=' . $lat . ',' . $lon . '&sensor=false';
+            $url = $api . '&latlng=' . $lat . ',' . $lon . '';
         }
 
         $geocode = file_get_contents($url);

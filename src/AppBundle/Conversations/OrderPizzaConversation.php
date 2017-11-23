@@ -2,7 +2,6 @@
 
 namespace AppBundle\Conversations;
 
-use AppBundle\Bot\Menu;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Category;
 use AppBundle\Entity\Customer;
@@ -12,7 +11,6 @@ use AppBundle\Entity\Pizza;
 use AppBundle\Entity\Uf;
 use BotMan\BotMan\Messages\Attachments\Location;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Facebook\Extensions\ButtonTemplate;
@@ -324,16 +322,12 @@ class OrderPizzaConversation extends BaseConversation
             'Envie a localização de entrega do pedido clicando no botão abaixo:',
             function (Location $location) {
 
-                $this->say('Received: ' . print_r($location, true));
-
-                /*global $kernel;
+                global $kernel;
 
                 $results = $kernel->getContainer()->get('app.helper.address')
                     ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
 
-                $kernel->getContainer()->get('logger')->info('Location', [$location, $results]);
-
-                $this->handlerAddressResults($results);*/
+                $this->handlerAddressResults($results);
             },
             null,
             [

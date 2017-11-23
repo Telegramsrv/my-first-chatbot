@@ -38,7 +38,7 @@ class AddressHelper
         }
 
         $url = '';
-        $api = 'http://maps.googleapis.com/maps/api/geocode/json?region=BR';
+        $api = 'https://maps.googleapis.com/maps/api/geocode/json?region=BR';
 
         if (!empty($address)) {
 

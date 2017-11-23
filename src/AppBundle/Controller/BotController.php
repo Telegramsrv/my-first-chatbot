@@ -89,8 +89,8 @@ class BotController extends Controller
      */
     public function testValidAddress()
     {
-        //$address = urlencode('Rua orminda machado duarte n 11 vila velha');
-        $address = urlencode('gama');
+        $address = urlencode('Rua orminda machado duarte n 11 vila velha');
+        //$address = urlencode('gama');
 
         $addressHelper = $this->get('app.helper.address');
 

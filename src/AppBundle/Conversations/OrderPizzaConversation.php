@@ -318,18 +318,40 @@ class OrderPizzaConversation extends BaseConversation
 
     public function shareAddress()
     {
-        $this->askForLocation(
+//        $this->askForLocation(
+//            'Envie a localização de entrega do pedido clicando no botão abaixo:',
+//            function (Location $location) {
+//                $this->say('Received: ' . print_r($location, true));
+//                /*global $kernel;
+//                $results = $kernel->getContainer()->get('app.helper.address')
+//                    ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
+//                $kernel->getContainer()->get('logger')->info('Location', [$location, $results]);
+//                $this->handlerAddressResults($results);*/
+//            },
+//            null,
+//            [
+//                'message' => [
+//                    'quick_replies' => json_encode([
+//                        [
+//                            'content_type' => 'location'
+//                        ]
+//                    ])
+//                ]
+//            ]);
+
+        $this->ask(
             'Envie a localização de entrega do pedido clicando no botão abaixo:',
-            function (Location $location) {
+            function (Answer $answer) {
 
                 global $kernel;
+
+                $location = $answer->getMessage()->getLocation();
 
                 $results = $kernel->getContainer()->get('app.helper.address')
                     ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
 
                 $this->handlerAddressResults($results);
             },
-            null,
             [
                 'message' => [
                     'quick_replies' => json_encode([

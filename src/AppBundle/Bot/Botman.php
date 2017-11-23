@@ -3,6 +3,7 @@
 namespace AppBundle\Bot;
 
 use BotMan\BotMan\BotManFactory;
+use BotMan\BotMan\Cache\Psr6Cache;
 use BotMan\BotMan\Cache\SymfonyCache;
 use BotMan\BotMan\Drivers\DriverManager;
 use BotMan\Drivers\Facebook\FacebookDriver;
@@ -10,6 +11,7 @@ use Doctrine\Common\Cache\SQLite3Cache;
 use SQLite3;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Component\Cache\Simple\FilesystemCache;
 
 class Botman
 {
@@ -53,10 +55,9 @@ class Botman
 
         $adapter = new FilesystemAdapter();
 
-        /*$provider = new SQLite3Cache(new SQLite3(__DIR__.'/../../../var/cache/data.sqlite'), 'chatbot_fb');
+        //$adapter = new FilesystemCache();
 
-        $adapter = new DoctrineAdapter($provider, $namespace = '', $defaultLifetime = 0);*/
-
-        return BotManFactory::create($config, new SymfonyCache($adapter));
+        return BotManFactory::create($config, new Psr6Cache($adapter));
+        //return BotManFactory::create($config, new SymfonyCache($adapter));
     }
 }

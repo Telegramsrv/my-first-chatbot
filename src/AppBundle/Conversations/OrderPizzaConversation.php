@@ -293,8 +293,8 @@ class OrderPizzaConversation extends BaseConversation
 
         $this->say($list);
 
-        $this->shareAddress();
-        //$this->textAddress();
+        //$this->shareAddress();
+        $this->textAddress();
     }
 
     public function textAddress()
@@ -318,40 +318,17 @@ class OrderPizzaConversation extends BaseConversation
 
     public function shareAddress()
     {
-//        $this->askForLocation(
-//            'Envie a localização de entrega do pedido clicando no botão abaixo:',
-//            function (Location $location) {
-//                $this->say('Received: ' . print_r($location, true));
-//                /*global $kernel;
-//                $results = $kernel->getContainer()->get('app.helper.address')
-//                    ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
-//                $kernel->getContainer()->get('logger')->info('Location', [$location, $results]);
-//                $this->handlerAddressResults($results);*/
-//            },
-//            null,
-//            [
-//                'message' => [
-//                    'quick_replies' => json_encode([
-//                        [
-//                            'content_type' => 'location'
-//                        ]
-//                    ])
-//                ]
-//            ]);
-
-        $this->ask(
+        $this->askForLocation(
             'Envie a localização de entrega do pedido clicando no botão abaixo:',
-            function (Answer $answer) {
-
-                global $kernel;
-
-                $location = $answer->getMessage()->getLocation();
-
+            function (Location $location) {
+                $this->say('Received: ' . print_r($location, true));
+                /*global $kernel;
                 $results = $kernel->getContainer()->get('app.helper.address')
                     ->validateGoogleMaps('', $location->getLatitude(), $location->getLongitude());
-
-                $this->handlerAddressResults($results);
+                $kernel->getContainer()->get('logger')->info('Location', [$location, $results]);
+                $this->handlerAddressResults($results);*/
             },
+            null,
             [
                 'message' => [
                     'quick_replies' => json_encode([
@@ -360,7 +337,8 @@ class OrderPizzaConversation extends BaseConversation
                         ]
                     ])
                 ]
-            ]);
+            ]
+        );
     }
 
     private function handlerAddressResults($results, $question = null)

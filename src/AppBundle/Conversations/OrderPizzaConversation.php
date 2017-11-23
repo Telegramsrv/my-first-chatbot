@@ -301,7 +301,7 @@ class OrderPizzaConversation extends BaseConversation
 
     public function textAddress()
     {
-        $question = Question::create('Qual o endereço de entrega?');
+        $question = Question::create('Qual o endereço de entrega? Ex: Rua Paulista, n 128');
 
         $this->ask(
             $question,

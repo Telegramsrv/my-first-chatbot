@@ -43,9 +43,6 @@ class Botman
                 'app_secret' => $this->secret,
                 'verification' => $this->verification,
             ],
-            'config' => [
-                'conversation_cache_time' => $this->conversationCacheTime
-            ],
             'botman' => [
                 'conversation_cache_time' => $this->conversationCacheTime
             ]

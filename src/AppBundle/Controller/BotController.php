@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Bot\Menu;
+use AppBundle\Conversations\LocationConversation;
 use AppBundle\Conversations\OrderPizzaConversation;
 use AppBundle\Conversations\StartConversation;
 use BotMan\BotMan\BotMan;
@@ -28,6 +29,7 @@ class BotController extends Controller
             ->start()
             ->orderPizza()
             ->info()
+            ->location()
             ->fallback();
 
         $this->botman->listen();
@@ -66,6 +68,18 @@ class BotController extends Controller
             Menu::CALLBACK_INFO,
             function (Botman $bot) {
                 $bot->reply('Estamos na Rua Coronel Mariano de Mello 671 JD Anhanguera, Ribeirão Preto. Tel: (11) 93847829.');
+            }
+        );
+
+        return $this;
+    }
+
+    private function location()
+    {
+        $this->botman->hears(
+            Menu::CALLBACK_LOCATION,
+            function (Botman $bot) {
+                $bot->startConversation(new LocationConversation());
             }
         );
 

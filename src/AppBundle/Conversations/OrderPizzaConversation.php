@@ -318,6 +318,16 @@ class OrderPizzaConversation extends BaseConversation
 
     public function shareAddress()
     {
+        $additionalParameters = [
+            'message' => [
+                'quick_replies' => json_encode([
+                    [
+                        'content_type' => 'location'
+                    ]
+                ])
+            ]
+        ];
+
         $this->askForLocation(
             'Envie a localização de entrega do pedido clicando no botão abaixo:',
             function (Location $location) {
@@ -329,15 +339,7 @@ class OrderPizzaConversation extends BaseConversation
                 $this->handlerAddressResults($results);*/
             },
             null,
-            [
-                'message' => [
-                    'quick_replies' => json_encode([
-                        [
-                            'content_type' => 'location'
-                        ]
-                    ])
-                ]
-            ]
+            $additionalParameters
         );
     }
 

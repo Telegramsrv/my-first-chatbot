@@ -27,9 +27,7 @@ class LocationConversation extends BaseConversation
             'Please share your location:',
             function (Location $location) {
                 $this->say('Received: ' . print_r($location, true));
-            },
-            null,
-            $additionalParameters
+            }
         );
     }
 }

@@ -7,6 +7,7 @@ use AppBundle\Conversations\LocationConversation;
 use AppBundle\Conversations\OrderPizzaConversation;
 use AppBundle\Conversations\StartConversation;
 use BotMan\BotMan\BotMan;
+use BotMan\BotMan\Messages\Attachments\Location;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,6 +32,11 @@ class BotController extends Controller
             ->info()
             ->location()
             ->fallback();
+
+        //just for test
+        $this->botman->receivesLocation(function (Location $location) {
+            $this->botman->reply('Received: ' . print_r($location, true));
+        });
 
         $this->botman->listen();
 

@@ -33,11 +33,6 @@ class BotController extends Controller
             ->location()
             ->fallback();
 
-        //just for test
-        $this->botman->receivesLocation(function (Location $location) {
-            $this->botman->reply('Received: ' . print_r($location, true));
-        });
-
         $this->botman->listen();
 
         return new Response('');

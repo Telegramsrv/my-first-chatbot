@@ -24,7 +24,7 @@ class LocationConversation extends BaseConversation
         ];
 
         $this->askForLocation(
-            'Envie a localização de entrega do pedido clicando no botão abaixo:',
+            'Please share your location:',
             function (Location $location) {
                 $this->say('Received: ' . print_r($location, true));
             },

@@ -24,6 +24,7 @@ class Botman
     private $secret;
     private $verification;
     private $conversationCacheTime;
+    private $cacheDir;
 
     /**
      * Botman constructor.
@@ -31,13 +32,15 @@ class Botman
      * @param $secret
      * @param $verification
      * @param $conversationCacheTime
+     * @param $cacheDir
      */
-    public function __construct($token, $secret, $verification, $conversationCacheTime)
+    public function __construct($token, $secret, $verification, $conversationCacheTime, $cacheDir)
     {
         $this->token = $token;
         $this->secret = $secret;
         $this->verification = $verification;
         $this->conversationCacheTime = $conversationCacheTime;
+        $this->cacheDir = $cacheDir;
     }
 
     public function getBotman()
@@ -55,11 +58,11 @@ class Botman
 
         DriverManager::loadDriver(FacebookDriver::class);
 
-        $adapter = new FilesystemAdapter();
+        $adapter = new FilesystemAdapter('', 0, $this->cacheDir);
         //$adapter = new ApcuAdapter();
         //$adapter = new PhpFilesAdapter();
 
-        return BotManFactory::create($config, new Psr6Cache($adapter));
-        //return BotManFactory::create($config, new SymfonyCache($adapter));
+        //return BotManFactory::create($config, new Psr6Cache($adapter));
+        return BotManFactory::create($config, new SymfonyCache($adapter));
     }
 }

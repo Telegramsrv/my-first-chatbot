@@ -6,7 +6,12 @@ parameters:
 services:
     app.botman:
         class: AppBundle\Bot\Botman
-        arguments: ['%fb_token%', '%fb_secret%', '%fb_verification%', '%conversation_cache_time%']
+        arguments:
+            - '%fb_token%'
+            - '%fb_secret%'
+            - '%fb_verification%'
+            - '%conversation_cache_time%'
+            - '%kernel.project_dir%/var/storage'
 
     app.user.canonicalizer.subscriber:
         class: AppBundle\EventListener\CanonicalizerSubscriber

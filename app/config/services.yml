@@ -11,7 +11,7 @@ services:
             - '%fb_secret%'
             - '%fb_verification%'
             - '%conversation_cache_time%'
-            - '%kernel.project_dir%/var/storage'
+            - '%kernel.project_dir%/storage'
 
     app.user.canonicalizer.subscriber:
         class: AppBundle\EventListener\CanonicalizerSubscriber
